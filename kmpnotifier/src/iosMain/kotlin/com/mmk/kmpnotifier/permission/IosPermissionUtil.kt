@@ -1,6 +1,5 @@
 package com.mmk.kmpnotifier.permission
 
-import com.mmk.kmpnotifier.notification.IosNotifier
 import platform.UserNotifications.UNAuthorizationOptionAlert
 import platform.UserNotifications.UNAuthorizationOptionBadge
 import platform.UserNotifications.UNAuthorizationOptionSound
@@ -24,10 +23,6 @@ internal class IosPermissionUtil(private val notificationCenter: UNUserNotificat
 
     override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) {
         notificationCenter.requestAuthorizationWithOptions(NOTIFICATION_PERMISSIONS) { isGranted, _ ->
-            if (isGranted) {
-                UNUserNotificationCenter.currentNotificationCenter().delegate =
-                    IosNotifier.NotificationDelegate()
-            }
             onPermissionResult(isGranted)
         }
     }
