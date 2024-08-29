@@ -1,16 +1,23 @@
 package com.mmk.kmpnotifier.extensions
 
+import cocoapods.FirebaseMessaging.FIRMessagingDelegateProtocol
 import com.mmk.kmpnotifier.Constants.KEY_IOS_FIREBASE_NOTIFICATION
 import com.mmk.kmpnotifier.firebase.FirebasePushNotifierImpl
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PayloadData
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UserNotifications.UNNotificationContent
 import platform.UserNotifications.UNUserNotificationCenterDelegateProtocol
 
-public fun NotifierManager.register(delegate: UNUserNotificationCenterDelegateProtocol) {
-    (getPushNotifier() as FirebasePushNotifierImpl).register(delegate)
+@OptIn(ExperimentalForeignApi::class)
+public fun NotifierManager.register(delegate: UNUserNotificationCenterDelegateProtocol, firebaseDelegate: FIRMessagingDelegateProtocol) {
+    (getPushNotifier() as FirebasePushNotifierImpl).register(delegate, firebaseDelegate)
+}
+
+public fun NotifierManager.onNewToken(apnsToken: String?) {
+    (getPushNotifier() as FirebasePushNotifierImpl).onNewToken(apnsToken)
 }
 
 /***

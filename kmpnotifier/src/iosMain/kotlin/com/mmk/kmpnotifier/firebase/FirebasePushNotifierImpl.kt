@@ -9,7 +9,6 @@ import platform.UIKit.UIApplication
 import platform.UIKit.registerForRemoteNotifications
 import platform.UserNotifications.UNUserNotificationCenter
 import platform.UserNotifications.UNUserNotificationCenterDelegateProtocol
-import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -17,14 +16,20 @@ import kotlin.coroutines.suspendCoroutine
 @OptIn(ExperimentalForeignApi::class)
 internal class FirebasePushNotifierImpl : PushNotifier {
 
-    private val firebaseMessageDelegate by lazy { FirebaseMessageDelegate() }
+    private val notifierManager by lazy { NotifierManagerImpl }
 
-    fun register(delegate: UNUserNotificationCenterDelegateProtocol) {
+    fun register(delegate: UNUserNotificationCenterDelegateProtocol, firebaseDelegate: FIRMessagingDelegateProtocol) {
         UNUserNotificationCenter.currentNotificationCenter().delegate = delegate
-        FIRMessaging.messaging().delegate = firebaseMessageDelegate
+        FIRMessaging.messaging().delegate = firebaseDelegate
         UIApplication.sharedApplication.registerForRemoteNotifications()
     }
 
+    fun onNewToken(apnsToken: String?) {
+        apnsToken?.let { token ->
+            println("FirebaseMessaging: onNewToken is called")
+            notifierManager.onNewToken(token)
+        }
+    }
 
     override suspend fun getToken(): String? = suspendCoroutine { cont ->
         FIRMessaging.messaging().tokenWithCompletion { token, error ->
@@ -46,17 +51,5 @@ internal class FirebasePushNotifierImpl : PushNotifier {
 
     override suspend fun unSubscribeFromTopic(topic: String) {
         FIRMessaging.messaging().unsubscribeFromTopic(topic)
-    }
-
-
-    private class FirebaseMessageDelegate : FIRMessagingDelegateProtocol, NSObject() {
-        private val notifierManager by lazy { NotifierManagerImpl }
-        override fun messaging(messaging: FIRMessaging, didReceiveRegistrationToken: String?) {
-            didReceiveRegistrationToken?.let { token ->
-                println("FirebaseMessaging: onNewToken is called")
-                notifierManager.onNewToken(didReceiveRegistrationToken)
-            }
-        }
-
     }
 }
