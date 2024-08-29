@@ -30,7 +30,7 @@ allprojects {
         repositories {
             maven {
                 name = "githubPackages"
-                url = uri("https://maven.pkg.github.com/coletz/KMPNotifier")
+                url = uri("https://maven.pkg.github.com/traceonio/KMPNotifier")
                 credentials(PasswordCredentials::class)
             }
         }
@@ -48,7 +48,7 @@ mavenPublishing {
     pom {
         name.set("KMPNotifier")
         description.set(" Kotlin Multiplatform Push Notification Library targeting ios and android")
-        url.set("https://github.com/coletz/KMPNotifier")
+        url.set("https://github.com/traceonio/KMPNotifier")
 
         licenses {
             license {
@@ -70,8 +70,8 @@ mavenPublishing {
         }
 
         scm {
-            connection.set("https://github.com/coletz/KMPNotifier.git")
-            url.set("https://github.com/coletz/KMPNotifier")
+            connection.set("https://github.com/traceonio/KMPNotifier.git")
+            url.set("https://github.com/traceonio/KMPNotifier")
         }
     }
 }
