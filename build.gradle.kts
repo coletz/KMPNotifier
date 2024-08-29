@@ -1,5 +1,4 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     // this is necessary to avoid the plugins to be loaded multiple times
@@ -10,92 +9,69 @@ plugins {
     alias(libs.plugins.androidLibrary) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinNativeCocoaPods) apply false
-    alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlinx.binary.validator)
-    alias(libs.plugins.nexusPublish)
-    id("com.google.gms.google-services") version "4.4.0" apply false
+    alias(libs.plugins.kmp.maven.publish)
+    id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
 
 
 
 allprojects {
-    group = "io.github.mirzemehdi"
+    group = "io.github.mirzemehdi.clzfork"
     version = project.properties["kmpNotifierVersion"] as String
-
-    val gpgKeySecret = gradleLocalProperties(rootDir).getProperty("gpgKeySecret")
-    val gpgKeyPassword = gradleLocalProperties(rootDir).getProperty("gpgKeyPassword")
 
     val excludedModules = listOf(":sample")
     if (project.path in excludedModules) return@allprojects
 
-    apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "maven-publish")
-    apply(plugin = "signing")
-
 
     extensions.configure<PublishingExtension> {
-        val javadocJar = tasks.register<Jar>("javadocJar") {
-            dependsOn(tasks.getByName<DokkaTask>("dokkaHtml"))
-            archiveClassifier.set("javadoc")
-            from("${layout.buildDirectory}/dokka")
-        }
-
-        publications {
-            withType<MavenPublication> {
-                artifact(javadocJar)
-                pom {
-                    groupId="io.github.mirzemehdi"
-                    name.set("KMPNotifier")
-                    description.set(" Kotlin Multiplatform Push Notification Library targeting ios and android")
-                    licenses {
-                        license {
-                            name.set("Apache-2.0")
-                            url.set("https://opensource.org/licenses/Apache-2.0")
-                        }
-                    }
-                    url.set("mirzemehdi.github.io/KMPNotifier/")
-                    issueManagement {
-                        system.set("Github")
-                        url.set("https://github.com/mirzemehdi/KMPNotifier/issues")
-                    }
-                    scm {
-                        connection.set("https://github.com/mirzemehdi/KMPNotifier.git")
-                        url.set("https://github.com/mirzemehdi/KMPNotifier")
-                    }
-                    developers {
-                        developer {
-                            name.set("Mirzamehdi Karimov")
-                            email.set("mirzemehdi@gmail.com")
-                        }
-                    }
-                }
+        repositories {
+            maven {
+                name = "githubPackages"
+                url = uri("https://maven.pkg.github.com/coletz/KMPNotifier")
+                credentials(PasswordCredentials::class)
             }
         }
     }
-
-    val publishing = extensions.getByType<PublishingExtension>()
-    extensions.configure<SigningExtension> {
-        useInMemoryPgpKeys(gpgKeySecret, gpgKeyPassword)
-        sign(publishing.publications)
-    }
-
-    // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
-    project.tasks.withType(AbstractPublishToMaven::class.java).configureEach {
-        dependsOn(project.tasks.withType(Sign::class.java))
-    }
 }
-nexusPublishing {
-    repositories {
-        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
-            val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
-            username = sonatypeUsername
-            password = sonatypePassword
+
+mavenPublishing {
+    // Define coordinates for the published artifact
+    coordinates(
+        groupId = "io.github.mirzemehdi.clzfork",
+        artifactId = "kmpnotifier",
+        version = project.properties["kmpNotifierVersion"] as String
+    )
+
+    pom {
+        name.set("KMPNotifier")
+        description.set(" Kotlin Multiplatform Push Notification Library targeting ios and android")
+        url.set("https://github.com/coletz/KMPNotifier")
+
+        licenses {
+            license {
+                name.set("Apache-2.0")
+                url.set("https://opensource.org/licenses/Apache-2.0")
+            }
+        }
+
+        developers {
+            developer {
+                name.set("Mirzamehdi Karimov")
+                email.set("mirzemehdi@gmail.com")
+            }
+            developer {
+                id.set("coletz")
+                name.set("coletz")
+                email.set("dcoletto.sw@gmail.com")
+            }
+        }
+
+        scm {
+            connection.set("https://github.com/coletz/KMPNotifier.git")
+            url.set("https://github.com/coletz/KMPNotifier")
         }
     }
 }
-
-
