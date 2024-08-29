@@ -1,12 +1,17 @@
 package com.mmk.kmpnotifier.extensions
 
 import com.mmk.kmpnotifier.Constants.KEY_IOS_FIREBASE_NOTIFICATION
+import com.mmk.kmpnotifier.firebase.FirebasePushNotifierImpl
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PayloadData
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
-import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationContent
+import platform.UserNotifications.UNUserNotificationCenterDelegateProtocol
+
+public fun NotifierManager.register(delegate: UNUserNotificationCenterDelegateProtocol) {
+    (getPushNotifier() as FirebasePushNotifierImpl).register(delegate)
+}
 
 /***
  * In order to receive notification data payload this functions needs to be called in
