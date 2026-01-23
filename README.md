@@ -1,6 +1,6 @@
 # KMPNotifier - Kotlin Multiplatform Push Notification
 [![Build](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml/badge.svg)](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml) 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.0-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.20-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi)
 
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
@@ -16,6 +16,10 @@
 Simple and easy to use Kotlin Multiplatform Push Notification library (using Firebase Cloud Messaging) targeting ios and android and Local Notification targetting android, ios, desktop and web (js and wasm).  
 This library is used in [FindTravelNow](https://github.com/mirzemehdi/FindTravelNow-KMM/) production KMP project.
 You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for full library api information.  
+
+![kmpnotifier](https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b)
+
+
 
 **_Related Blog Posts_**  
 [KMPNotifier Update: Web, Desktop, and New Features for Kotlin Multiplatform Notifications](https://proandroiddev.com/kmpnotifier-update-web-desktop-and-new-features-for-kotlin-multiplatform-notifications-529b489f5d9c)  
@@ -231,16 +235,21 @@ If you are using mac make sure you also allow notifications for browser from sys
 You can send either local or push notification.
 
 ### Local Notification
-Local notifications are supported on Android, iOS, JS and wasm targets. 
+Local notifications are supported on Android, iOS, JS and wasm targets. Image is supported on Android and iOS 
 #### Send notification
 
 ```kotlin
 val notifier = NotifierManager.getLocalNotifier()
-val notificationId = notifier.notify("Title", "Body") 
-// or you can use below to specify ID yourself
-notifier.notify(1, "Title", "Body")
-
-
+notifier.notify {
+  id= Random.nextInt(0, Int.MAX_VALUE)
+  title = "Title from KMPNotifier"
+  body = "Body message from KMPNotifier"
+  payloadData = mapOf(
+    Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+    "extraKey" to "randomValue"
+  )
+  image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+}
 ```
 
 #### Remove notification by Id or all notifications
