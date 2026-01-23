@@ -10,12 +10,17 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinNativeCocoaPods) apply false
     alias(libs.plugins.kotlinx.binary.validator)
-    alias(libs.plugins.kmp.maven.publish)
+    alias(libs.plugins.mavenPublish) apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
-
-
+apiValidation {
+    @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
+    klib {
+        enabled = true
+    }
+    ignoredProjects += "sample"
+}
 
 allprojects {
     group = "io.github.mirzemehdi.clzfork"
@@ -30,48 +35,9 @@ allprojects {
         repositories {
             maven {
                 name = "githubPackages"
-                url = uri("https://maven.pkg.github.com/traceonio/KMPNotifier")
+                url = uri("https://maven.pkg.github.com/EggonDev/KMPNotifier")
                 credentials(PasswordCredentials::class)
             }
-        }
-    }
-}
-
-mavenPublishing {
-    // Define coordinates for the published artifact
-    coordinates(
-        groupId = "io.github.mirzemehdi.clzfork",
-        artifactId = "kmpnotifier",
-        version = project.properties["kmpNotifierVersion"] as String
-    )
-
-    pom {
-        name.set("KMPNotifier")
-        description.set(" Kotlin Multiplatform Push Notification Library targeting ios and android")
-        url.set("https://github.com/traceonio/KMPNotifier")
-
-        licenses {
-            license {
-                name.set("Apache-2.0")
-                url.set("https://opensource.org/licenses/Apache-2.0")
-            }
-        }
-
-        developers {
-            developer {
-                name.set("Mirzamehdi Karimov")
-                email.set("mirzemehdi@gmail.com")
-            }
-            developer {
-                id.set("coletz")
-                name.set("coletz")
-                email.set("dcoletto.sw@gmail.com")
-            }
-        }
-
-        scm {
-            connection.set("https://github.com/traceonio/KMPNotifier.git")
-            url.set("https://github.com/traceonio/KMPNotifier")
         }
     }
 }

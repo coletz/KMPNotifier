@@ -11,11 +11,11 @@ androidx-startup-runtime = "1.2.0"
 kotlin = "2.1.10"
 koin = "4.0.2"
 kotlinx-binary-validator = "0.16.3"
-dokka = "2.0.0"
 firebase-messaging = "24.1.0"
 kotlinx-coroutine = "1.10.1"
-kmp-maven-publish = "0.29.0"
 kotlinx-browser = "0.3"
+mavenPublish = "0.31.0"
+
 
 
 
@@ -42,5 +42,4 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinNativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-binary-validator" }
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-kmp-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "kmp-maven-publish" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }

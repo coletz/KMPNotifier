@@ -1,10 +1,13 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinNativeCocoaPods)
-
+    alias(libs.plugins.mavenPublish)
 }
 
 kotlin {
@@ -91,6 +94,41 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+mavenPublishing {
+    coordinates(
+        groupId = "io.github.mirzemehdi.clzfork",
+        artifactId = "kmpnotifier",
+        version = project.properties["kmpNotifierVersion"] as String
+    )
+    pom {
+        name = "KMPNotifier"
+        description = "Kotlin Multiplatform Push Notification Library targeting ios and android"
+        url = "https://github.com/EggonDev/KMPNotifier"
+
+        licenses {
+            license {
+                name.set("Apache-2.0")
+                url.set("https://opensource.org/licenses/Apache-2.0")
+            }
+        }
+        developers {
+            developer {
+                name.set("Mirzamehdi Karimov")
+                email.set("mirzemehdi@gmail.com")
+            }
+            developer {
+                id.set("coletz")
+                name.set("coletz")
+                email.set("dcoletto.sw@gmail.com")
+            }
+        }
+        scm {
+            connection.set("https://github.com/EggonDev/KMPNotifier.git")
+            url.set("https://github.com/EggonDev/KMPNotifier")
+        }
     }
 }
 

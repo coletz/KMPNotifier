@@ -43,7 +43,7 @@ public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: M
     }
 }
 
-internal fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
+public fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
     val userInfo = notificationContent.userInfo
     val payloadData = userInfo.asPayloadData()
     val hasNotification = notificationContent.title != null || notificationContent.body != null
@@ -63,7 +63,7 @@ internal fun NotifierManager.onUserNotification(notificationContent: UNNotificat
     }
 }
 
-internal fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
+public fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
     NotifierManagerImpl.onNotificationClicked(notificationContent.userInfo.asPayloadData())
 }
 
