@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.kotlinNativeCocoaPods) apply false
     alias(libs.plugins.kotlinx.binary.validator)
     alias(libs.plugins.mavenPublish) apply false
-    id("com.google.gms.google-services") version "4.4.2" apply false
+    alias(libs.plugins.google.services) apply false
 }
 
 apiValidation {
