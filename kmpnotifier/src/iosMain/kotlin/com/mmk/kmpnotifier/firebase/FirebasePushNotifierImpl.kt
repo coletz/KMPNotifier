@@ -2,6 +2,8 @@ package com.mmk.kmpnotifier.firebase
 
 import cocoapods.FirebaseMessaging.FIRMessaging
 import cocoapods.FirebaseMessaging.FIRMessagingDelegateProtocol
+import com.mmk.kmpnotifier.logger.currentLogger
+import com.mmk.kmpnotifier.notification.IosNotifier
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PushNotifier
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -19,6 +21,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     private val notifierManager by lazy { NotifierManagerImpl }
 
     fun register(delegate: UNUserNotificationCenterDelegateProtocol, firebaseDelegate: FIRMessagingDelegateProtocol) {
+        currentLogger.log("FirebasePushNotifier is initialized")
         UNUserNotificationCenter.currentNotificationCenter().delegate = delegate
         FIRMessaging.messaging().delegate = firebaseDelegate
         UIApplication.sharedApplication.registerForRemoteNotifications()
@@ -34,7 +37,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     override suspend fun getToken(): String? = suspendCoroutine { cont ->
         FIRMessaging.messaging().tokenWithCompletion { token, error ->
             cont.resume(token)
-            error?.let { println("Error while getting token: $error") }
+            error?.let { currentLogger.log("Error while getting token: $error") }
         }
 
     }
@@ -51,5 +54,17 @@ internal class FirebasePushNotifierImpl : PushNotifier {
 
     override suspend fun unSubscribeFromTopic(topic: String) {
         FIRMessaging.messaging().unsubscribeFromTopic(topic)
+    }
+
+
+    private class FirebaseMessageDelegate : FIRMessagingDelegateProtocol, NSObject() {
+        private val notifierManager by lazy { NotifierManagerImpl }
+        override fun messaging(messaging: FIRMessaging, didReceiveRegistrationToken: String?) {
+            didReceiveRegistrationToken?.let { token ->
+                currentLogger.log("FirebaseMessaging: onNewToken is called")
+                notifierManager.onNewToken(didReceiveRegistrationToken)
+            }
+        }
+
     }
 }
